@@ -8,6 +8,7 @@ const User = sequelize.define('user', {
     isActivated: {type: DataTypes.BOOLEAN, defaultValue: false}, // is email confirmed
     activationLink: {type: DataTypes.STRING},
     role: {type: DataTypes.STRING, defaultValue: 'USER' }
+    // devices: {type: DataTypes.ARRAY(DataTypes.TEXT), defaultValue: '' }
 })
 
 const Token = sequelize.define('token', {
