@@ -25,14 +25,15 @@ const Profile = sequelize.define('profile', {
 
 const Item = sequelize.define('item', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    date: {type: DataTypes.DATE },
-    type: {type: DataTypes.STRING, allowNull: false },
-    isIncome: {type: DataTypes.BOOLEAN, defaultValue: false},
+    type: {type: DataTypes.STRING, allowNull: false },  // EXPENSE, INCOME, SAVINGS
+    isIncome: {type: DataTypes.BOOLEAN, defaultValue: false},  // IF SAVINGS: TRUE OR FALSE, IF EXPENSE: FALSE, IF INCOME: TRUE
     name: {type: DataTypes.STRING},
     description: {type: DataTypes.STRING },
-    category: {type: DataTypes.STRING },
+    category: {type: DataTypes.STRING }, // IF SAVINGS: NONE
     amount: {type: DataTypes.DOUBLE, defaultValue: 0.0 },
-    currency: {type: DataTypes.STRING }
+    currency: {type: DataTypes.STRING },
+    createdAt: { type: DataTypes.DATE, field: 'createdAt' },
+    updatedAt: { type: DataTypes.DATE, field: 'updatedAt' }
 })
 
 const Note = sequelize.define('note', {
