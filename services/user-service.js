@@ -7,6 +7,8 @@ const UserDto = require('../dtos/user-dto')
 const ApiError = require('../errors/api-error')
 
 class UserService {
+
+// USER
     async registration(email, password, role) {
         const candidate = await User.findOne({where: {email}})//.catch((e) => console.log(e))
         if(candidate) {
@@ -55,62 +57,23 @@ class UserService {
         const token = await tokenService.removeToken(refreshToken)
         return token
     }
+    
+    async get(refreshToken) {
+        const user = await this.getCurrentUser(refreshToken)
+        const userDto = new UserDto(user)
+        return userDto
+    }
 
     async refresh(refreshToken) {
-        if(!refreshToken) {
-            throw ApiError.UnauthorizedError()
-        }
-        const userData = await tokenService.validateRefreshToken(refreshToken)
-        const tokenFromDb = await tokenService.findToken(refreshToken)
-        if(!userData || !tokenFromDb) {
-            throw ApiError.UnauthorizedError()
-        }
-
-        const user = await User.findByPk(userData.id)
-        const userDto = new UserDto(user)
+        const userDto = await this.get(refreshToken)
         const tokens = tokenService.generateTokens({...userDto})
        
         await tokenService.saveToken(userDto.id, tokens.refreshToken)
         return { ...tokens, user: userDto }
     }
 
-    async getAllUsers() {
-        const users = await User.findAll()
-        return users
-    }
-
-    async getUser(id) {
-        const user = await User.findByPk(id)
-        if(!user) {
-            throw ApiError.BadRequest(`User with id ${id} not found`)
-        }
-        return user
-    }
-
-    async delete(id) {
-        const user = await User.findByPk(id)
-        const userDto = new UserDto(user)
-
-        await User.destroy({where: {id}})
-        
-        return userDto
-    }
-
     async changePassword(refreshToken, oldPassword, newPassword) {
-        if(!refreshToken) {
-            throw ApiError.UnauthorizedError()
-        }
-        const userData = await tokenService.validateRefreshToken(refreshToken)
-        const tokenFromDb = await tokenService.findToken(refreshToken)
-        if(!userData || !tokenFromDb) {
-            throw ApiError.UnauthorizedError()
-        }
-
-        const user = await User.findByPk(userData.id)
-        if(!user) {
-            throw ApiError.BadRequest(`User with email ${userData.email} not found`)
-        }
-        
+        const user = await this.getCurrentUser(refreshToken)
         const isPassEquals = await bcrypt.compare(oldPassword, user.password)
         if(!isPassEquals) {
             throw ApiError.BadRequest(`Incorrect password`)
@@ -130,6 +93,61 @@ class UserService {
         await tokenService.saveToken(userDto.id, tokens.refreshToken)
 
         return { ...tokens, user: userDto }
+    }
+    
+
+    async delete(refreshToken) {
+        const user = await this.getCurrentUser(refreshToken)
+        const userDto = new UserDto(user)
+
+        await User.destroy({where: {id: user.id}})
+        
+        return userDto
+    }
+
+    async getCurrentUser(refreshToken) {
+        if(!refreshToken) {
+            throw ApiError.UnauthorizedError()
+        }
+        const userData = await tokenService.validateRefreshToken(refreshToken)
+        const tokenFromDb = await tokenService.findToken(refreshToken)
+        if(!userData || !tokenFromDb) {
+            throw ApiError.UnauthorizedError()
+        }
+
+        const user = await User.findByPk(userData.id)
+        if(!user) {
+            throw ApiError.BadRequest(`User with id ${user.id} not found`)
+        }
+        return user
+    }
+
+    async getCurrentUserId(refreshToken) {
+        const user = await this.getCurrentUserId(refreshToken)
+        return user.id
+    }
+
+// ADMIN
+    async getAll() {
+        const users = await User.findAll()
+        return users
+    }
+
+    async getUserById(id) {
+        const user = await User.findByPk(id)
+        if(!user) {
+            throw ApiError.BadRequest(`User with id ${id} not found`)
+        }
+        return user
+    }
+
+    async deleteUserById(id) {
+        const user = await User.findByPk(id)
+        const userDto = new UserDto(user)
+
+        await User.destroy({where: {id}})
+        
+        return userDto
     }
 }
 

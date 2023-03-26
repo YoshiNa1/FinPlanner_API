@@ -5,6 +5,7 @@ const ApiError = require('../errors/api-error')
 const d30 = 30 * 24 * 60 * 60 * 1000
 
 class UserController {
+// USER
     async registration(req, res, next) {
         try {
             const errors = validationResult(req)
@@ -68,19 +69,10 @@ class UserController {
         }
     }
 
-    async getUsers(req, res, next) {
+    async get(req, res, next) {
         try {
-            const users = await userService.getAllUsers()
-            return res.json(users)
-        } catch (e) {
-            next(e)
-        }
-    }
-    
-    async getUser(req, res, next) {
-        try {
-            const id = req.params.id
-            const user = await userService.getUser(id)
+            const {refreshToken} = req.cookies
+            const user = await userService.get(refreshToken)
             return res.json(user)
         } catch (e) {
             next(e)
@@ -89,8 +81,8 @@ class UserController {
 
     async delete(req, res, next) {
         try {
-            const id = req.params.id
-            const user = await userService.delete(id)
+            const {refreshToken} = req.cookies
+            const user = await userService.delete(refreshToken)
             return res.json({message: `User ${user.email} was succesfully deleted`})
         } catch (e) {
             next(e)
@@ -109,6 +101,37 @@ class UserController {
             next(e)
         }
     }
+
+// ADMIN
+    async getAll(req, res, next) {
+        try {
+            const users = await userService.getAll()
+            return res.json(users)
+        } catch (e) {
+            next(e)
+        }
+    }
+    
+    async getUserById(req, res, next) {
+        try {
+            const id = req.params.id
+            const user = await userService.getUserById(id)
+            return res.json(user)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async deleteUserById(req, res, next) {
+        try {
+            const id = req.params.id
+            const user = await userService.deleteUserById(id)
+            return res.json({message: `User ${user.email} was succesfully deleted`})
+        } catch (e) {
+            next(e)
+        }
+    }
+
 }
 
 module.exports = new UserController()
