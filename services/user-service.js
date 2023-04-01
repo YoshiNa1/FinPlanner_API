@@ -1,4 +1,4 @@
-const {User} = require('../models/models')
+const {User, List} = require('../models/models')
 const bcrypt = require('bcrypt')
 const uuid = require('uuid')
 const mailService = require('./mail-service')
@@ -23,6 +23,8 @@ class UserService {
         const userDto = new UserDto(user) // for payload, have only four fields: id, email, role, isActivated
         const tokens = tokenService.generateTokens({...userDto}) // ... it's spread-operator, when you return object
         await tokenService.saveToken(userDto.id, tokens.refreshToken)
+
+        await this.createList(userDto.id)
 
         return { ...tokens, // разворачивание объекта
                 user: userDto }
@@ -123,10 +125,19 @@ class UserService {
     }
 
     async getCurrentUserId(refreshToken) {
-        const user = await this.getCurrentUserId(refreshToken)
+        const user = await this.getCurrentUser(refreshToken)
         return user.id
     }
 
+    async createList(userId) { // creating after registration
+        const candidate = await List.findOne({where: {userId}})
+        if(candidate) {
+            throw ApiError.BadRequest(`List for user with id ${userId} already exists`)
+        }
+        const list = await List.create({userId, content: new Array()})
+        return list
+    }
+    
 // ADMIN
     async getAll() {
         const users = await User.findAll()

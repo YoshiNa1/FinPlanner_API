@@ -39,7 +39,7 @@ const Item = sequelize.define('item', {
 const Note = sequelize.define('note', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     date: {type: DataTypes.DATE },
-    description: {type: DataTypes.STRING }
+    content: {type: DataTypes.STRING }
 })
 
 const List = sequelize.define('list', {

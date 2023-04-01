@@ -1,6 +1,5 @@
 const {Item, User} = require('../models/models')
 const ApiError = require('../errors/api-error')
-const tokenService = require('./token-service')
 const userService = require('../services/user-service')
 
 class ItemService {
@@ -26,8 +25,8 @@ class ItemService {
 
     async update(refreshToken, id, type, isIncome, name, description, category, amount, currency) {
         const item = await this.getById(refreshToken, id)
-        const updProfile = await item.update({type, isIncome, name, description, category, amount, currency})
-        return updProfile
+        const updItem = await item.update({type, isIncome, name, description, category, amount, currency})
+        return updItem
     }
 
     async deleteById(refreshToken, id) {
