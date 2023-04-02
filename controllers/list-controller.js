@@ -34,19 +34,19 @@ class ListController {
             next(e)
         }
     }
-    async getByUserId(req, res, next) {
+    async getByUserUuid(req, res, next) {
         try {
-            const userId = req.params.userId
-            const list = await listService.geByUserId(userId)
+            const userUuid = req.params.userUuid
+            const list = await listService.geByUserUuid(userUuid)
             return res.json(list)
         } catch (e) {
             next(e)
         }
     }
-    async deleteByUserId(req, res, next) {
+    async deleteByUserUuid(req, res, next) {
         try {
-            const userId = req.params.userId
-            const list = await listService.deleteByUserId(userId)
+            const userUuid = req.params.userUuid
+            const list = await listService.deleteByUserUuid(userUuid)
             return res.json(list)
         } catch (e) {
             next(e)

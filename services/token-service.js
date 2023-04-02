@@ -29,13 +29,13 @@ class TokenService {
         }
     }
 
-    async saveToken(userId, refreshToken) {
-        const tokenData = await Token.findOne({user: userId}) // НЕЛЬЗЯ С ДРУГОГО УСТРОЙСТВА ЗАЙТИ! Так как на одного юзера один refresh токен
+    async saveToken(userUuid, refreshToken) {
+        const tokenData = await Token.findOne({user: userUuid}) // НЕЛЬЗЯ С ДРУГОГО УСТРОЙСТВА ЗАЙТИ! Так как на одного юзера один refresh токен
         if (tokenData) {
             tokenData.refreshToken = refreshToken
             return tokenData.save()
         }
-        const token = await Token.create({user: userId, refreshToken})
+        const token = await Token.create({user: userUuid, refreshToken})
         return token
     }
 

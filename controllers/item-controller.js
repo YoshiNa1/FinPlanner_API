@@ -14,11 +14,11 @@ class ItemController {
         }
     }
 
-    async getById(req, res, next) {
+    async getByUuid(req, res, next) {
         try {
             const {refreshToken} = req.cookies
-            const id = req.params.id
-            const item = await itemService.getById(refreshToken, id)
+            const uuid = req.params.uuid
+            const item = await itemService.getByUuid(refreshToken, uuid)
             return res.json(item)
         } catch (e) {
             next(e)
@@ -38,10 +38,10 @@ class ItemController {
     async update(req, res, next) {
         try {
             const {refreshToken} = req.cookies
-            const id = req.params.id
+            const uuid = req.params.uuid
             const {type, isIncome, name, description, 
                     category, amount, currency} = req.body
-            const item = await itemService.update(refreshToken, id, 
+            const item = await itemService.update(refreshToken, uuid, 
                                                     type, isIncome, name, description, category, amount, currency)
             return res.json(item)
         } catch (e) {
@@ -49,11 +49,11 @@ class ItemController {
         }
     }
 
-    async deleteById(req, res, next) {
+    async deleteByUuid(req, res, next) {
         try {
             const {refreshToken} = req.cookies
-            const id = req.params.id
-            const item = await itemService.deleteById(refreshToken, id)
+            const uuid = req.params.uuid
+            const item = await itemService.deleteByUuid(refreshToken, uuid)
             return res.json(item)
         } catch (e) {
             next(e)
@@ -72,8 +72,8 @@ class ItemController {
 
     async getAllForUser(req, res, next) {
         try {
-            const userId = req.params.userId
-            const items = await itemService.getAllForUser(userId)
+            const userUuid = req.params.userUuid
+            const items = await itemService.getAllForUser(userUuid)
             return res.json(items)
         } catch (e) {
             next(e)
@@ -82,8 +82,8 @@ class ItemController {
 
     async deleteAllForUser(req, res, next) {
         try {
-            const userId = req.params.userId
-            const items = await itemService.deleteAllForUser(userId)
+            const userUuid = req.params.userUuid
+            const items = await itemService.deleteAllForUser(userUuid)
             return res.json(items)
         } catch (e) {
             next(e)

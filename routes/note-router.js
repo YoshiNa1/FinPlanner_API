@@ -13,7 +13,7 @@ router.delete('/:date', checkProfile, noteController.deleteByDate)
 
 //ADMIN
 router.get('/all', checkRole('ADMIN'), noteController.getAllData)
-router.get('/user/:userId', checkRole('ADMIN'), noteController.getAllForUser)
-router.delete('/user/:userId', checkRole('ADMIN'), noteController.deleteAllForUser)
+router.get('/user/:userUuid', checkRole('ADMIN'), noteController.getAllForUser)
+router.delete('/user/:userUuid', checkRole('ADMIN'), noteController.deleteAllForUser)
 
 module.exports = router

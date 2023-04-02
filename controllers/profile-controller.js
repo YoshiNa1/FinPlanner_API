@@ -54,19 +54,19 @@ class ProfileController {
             next(e)
         }
     }
-    async getProfileById(req, res, next) {
+    async getProfileByUuid(req, res, next) {
         try {
-            const userId = req.params.userId
-            const profile = await profileService.getProfileById(userId)
+            const userUuid = req.params.userUuid
+            const profile = await profileService.getProfileByUuid(userUuid)
             return res.json(profile)
         } catch (e) {
             next(e)
         }
     }
-    async deleteProfileById(req, res, next) {
+    async deleteProfileByUuid(req, res, next) {
         try {
-            const userId = req.params.userId
-            const profile = await profileService.getProfileById(userId)
+            const userUuid = req.params.userUuid
+            const profile = await profileService.getProfileByUuid(userUuid)
             return res.json(profile)
         } catch (e) {
             next(e)

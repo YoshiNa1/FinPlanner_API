@@ -68,8 +68,8 @@ class NoteController {
 
     async getAllForUser(req, res, next) {
         try {
-            const userId = req.params.userId
-            const notes = await noteService.getAllForUser(userId)
+            const userUuid = req.params.userUuid
+            const notes = await noteService.getAllForUser(userUuid)
             return res.json(notes)
         } catch (e) {
             next(e)
@@ -78,8 +78,8 @@ class NoteController {
 
     async deleteAllForUser(req, res, next) {
         try {
-            const userId = req.params.userId
-            const notes = await noteService.deleteAllForUser(userId)
+            const userUuid = req.params.userUuid
+            const notes = await noteService.deleteAllForUser(userUuid)
             return res.json(notes)
         } catch (e) {
             next(e)

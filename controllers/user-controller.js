@@ -112,20 +112,20 @@ class UserController {
         }
     }
     
-    async getUserById(req, res, next) {
+    async getUserByUuid(req, res, next) {
         try {
-            const id = req.params.id
-            const user = await userService.getUserById(id)
+            const uuid = req.params.uuid
+            const user = await userService.getUserByUuid(uuid)
             return res.json(user)
         } catch (e) {
             next(e)
         }
     }
 
-    async deleteUserById(req, res, next) {
+    async deleteUserByUuid(req, res, next) {
         try {
-            const id = req.params.id
-            const user = await userService.deleteUserById(id)
+            const uuid = req.params.uuid
+            const user = await userService.deleteUserByUuid(uuid)
             return res.json({message: `User ${user.email} was succesfully deleted`})
         } catch (e) {
             next(e)

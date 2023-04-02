@@ -6,19 +6,19 @@ class ListService {
 // USER
    
     async get(refreshToken) {
-        const userId = await userService.getCurrentUserId(refreshToken)
-        const list = await List.findOne({where: {userId}})
+        const userUuid = await userService.getCurrentUserUuid(refreshToken)
+        const list = await List.findOne({where: {userUuid}})
         if(!list) {
-            throw ApiError.BadRequest(`List for user with id ${userId} does not exists yet`)
+            throw ApiError.BadRequest(`List for user with uuid ${userUuid} does not exists yet`)
         }
         return list
     }
 
     async update(refreshToken, content) {
-        const userId = await userService.getCurrentUserId(refreshToken)
-        var list = await List.findOne({where: {userId}})
+        const userUuid = await userService.getCurrentUserUuid(refreshToken)
+        var list = await List.findOne({where: {userUuid}})
         if(!list) {
-            list = await userService.createList(userId)
+            list = await userService.createList(userUuid)
         }
         const updList = await list.update({content})
         return updList
@@ -29,23 +29,23 @@ class ListService {
         const lists = await List.findAll()
         return lists
     }
-    async getByUserId(userId) {
-        const user = await User.findByPk(userId)
+    async getByUserUuid(userUuid) {
+        const user = await User.findByPk(userUuid)
         if(!user) {
-            throw ApiError.BadRequest(`User with id ${userId} not found`)
+            throw ApiError.BadRequest(`User with uuid ${userUuid} not found`)
         }
-        const list = await List.findOne({where: {userId}})
+        const list = await List.findOne({where: {userUuid}})
         if(!list) {
-            throw ApiError.BadRequest(`List for user with id ${userId} does not exists yet`)
+            throw ApiError.BadRequest(`List for user with uuid ${userUuid} does not exists yet`)
         }
         return list
     }
-    async deleteByUserId(userId) { // delete when delete user from the system
-        const user = await User.findByPk(userId)
+    async deleteByUserUuid(userUuid) { // delete when delete user from the system
+        const user = await User.findByPk(userUuid)
         if(!user) {
-            throw ApiError.BadRequest(`User with id ${userId} not found`)
+            throw ApiError.BadRequest(`User with uuid ${userUuid} not found`)
         }
-        await List.destroy({where: {userId}})
+        await List.destroy({where: {userUuid}})
     }
 }
 

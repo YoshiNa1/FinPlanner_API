@@ -5,18 +5,18 @@ const userService = require('../services/user-service')
 class ProfileService {
 // USER
     async create(refreshToken, balance, savings, currency) {
-        const userId = await userService.getCurrentUserId(refreshToken)
-        const candidate = await Profile.findOne({where: {userId}})
+        const userUuid = await userService.getCurrentUserUuid(refreshToken)
+        const candidate = await Profile.findOne({where: {userUuid}})
         if(candidate) {
-            throw ApiError.BadRequest(`Profile for user with id ${userId} already exists`)
+            throw ApiError.BadRequest(`Profile for user with uuid ${userUuid} already exists`)
         }
-        const profile = await Profile.create({userId, balance, savings, currency})
+        const profile = await Profile.create({userUuid, balance, savings, currency})
         return profile
     }
 
     async get(refreshToken) {
-        const userId = await userService.getCurrentUserId(refreshToken)
-        const profile = await Profile.findOne({where: {userId}})
+        const userUuid = await userService.getCurrentUserUuid(refreshToken)
+        const profile = await Profile.findOne({where: {userUuid}})
         if(!profile) {
             throw ApiError.BadRequest(`User's profile wasn't created yet`)
         }
@@ -30,8 +30,8 @@ class ProfileService {
     }
 
     async delete(refreshToken) {
-        const userId = await userService.getCurrentUserId(refreshToken)
-        await Profile.destroy({where: {userId}})
+        const userUuid = await userService.getCurrentUserUuid(refreshToken)
+        await Profile.destroy({where: {userUuid}})
     }
 
 // ADMIN
@@ -39,23 +39,23 @@ class ProfileService {
         const profiles = await Profile.findAll()
         return profiles
     }
-    async getProfileById(userId) {
-        const user = await User.findByPk(userId)
+    async getProfileByUuid(userUuid) {
+        const user = await User.findByPk(userUuid)
         if(!user) {
-            throw ApiError.BadRequest(`User with id ${userId} not found`)
+            throw ApiError.BadRequest(`User with uuid ${userUuid} not found`)
         }
-        const profile = await Profile.findOne({where: {userId}})
+        const profile = await Profile.findOne({where: {userUuid}})
         if(!profile) {
             throw ApiError.BadRequest(`User's profile wasn't created yet`)
         }
         return profile
     }
-    async deleteProfileById(userId) {
-        const user = await User.findByPk(userId)
+    async deleteProfileByUuid(userUuid) {
+        const user = await User.findByPk(userUuid)
         if(!user) {
-            throw ApiError.BadRequest(`User with id ${userId} not found`)
+            throw ApiError.BadRequest(`User with uuid ${userUuid} not found`)
         }
-        await Profile.destroy({where: {userId}})
+        await Profile.destroy({where: {userUuid}})
     }
 }
 

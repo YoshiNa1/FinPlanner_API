@@ -18,7 +18,7 @@ module.exports = async function (req, res, next) {
             return next(ApiError.UnauthorizedError())
         }
 
-        const profile = await Profile.findOne({where: {userId: userData.id}})
+        const profile = await Profile.findOne({where: {userUuid: userData.uuid}})
         if(!profile) {
             return next(ApiError.Forbidden(`User's profile wasn't created yet`))
         }

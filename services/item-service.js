@@ -4,33 +4,33 @@ const userService = require('../services/user-service')
 
 class ItemService {
     async create(refreshToken, type, isIncome, name, description, category, amount, currency) {
-        const userId = await userService.getCurrentUserId(refreshToken)
-        const item = await Item.create({userId, type, isIncome, name, description, category, amount, currency})
+        const userUuid = await userService.getCurrentUserUuid(refreshToken)
+        const item = await Item.create({userUuid, type, isIncome, name, description, category, amount, currency})
         return item
     }
 
     async getAll(refreshToken) {
-        const userId = await userService.getCurrentUserId(refreshToken)
-        const items = await Item.findAll({where: {userId}})
+        const userUuid = await userService.getCurrentUserUuid(refreshToken)
+        const items = await Item.findAll({where: {userUuid}})
         return items
     }
-    async getById(refreshToken, id) {
-        const userId = await userService.getCurrentUserId(refreshToken)
-        const item = await Item.findOne({where: {userId, id}})
+    async getByUuid(refreshToken, uuid) {
+        const userUuid = await userService.getCurrentUserUuid(refreshToken)
+        const item = await Item.findOne({where: {userUuid, uuid}})
         if(!item) {
-            throw ApiError.BadRequest(`Item with id ${id} not found`)
+            throw ApiError.BadRequest(`Item with uuid ${uuid} not found`)
         }
         return item
     }
 
-    async update(refreshToken, id, type, isIncome, name, description, category, amount, currency) {
-        const item = await this.getById(refreshToken, id)
+    async update(refreshToken, uuid, type, isIncome, name, description, category, amount, currency) {
+        const item = await this.getByUuid(refreshToken, uuid)
         const updItem = await item.update({type, isIncome, name, description, category, amount, currency})
         return updItem
     }
 
-    async deleteById(refreshToken, id) {
-        const item = await this.getById(refreshToken, id)
+    async deleteByUuid(refreshToken, uuid) {
+        const item = await this.getByUuid(refreshToken, uuid)
         await item.destroy()
     }
 
@@ -39,16 +39,16 @@ class ItemService {
         const items = await Item.findAll()
         return items
     }
-    async getAllForUser(userId) {
-        const user = await User.findOne({where: {id: userId}})
+    async getAllForUser(userUuid) {
+        const user = await User.findOne({where: {id: userUuid}})
         if(!user) {
-            throw ApiError.BadRequest(`User with id ${userId} not found`)
+            throw ApiError.BadRequest(`User with uuid ${userUuid} not found`)
         }
-        const items = await Item.findAll({where: {userId}})
+        const items = await Item.findAll({where: {userUuid}})
         return items
     }
-    async deleteAllForUser(userId) {
-        await Item.destroy({where: {userId}})
+    async deleteAllForUser(userUuid) {
+        await Item.destroy({where: {userUuid}})
     }
 }
 

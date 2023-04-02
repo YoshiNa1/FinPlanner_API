@@ -23,6 +23,6 @@ router.put('/changePassword',
 
 // ADMIN
 router.get('/all', checkRole('ADMIN'), userController.getAll)
-router.get('/getUser/:id', checkRole('ADMIN'), userController.getUserById)
-router.delete('/delete/:id', checkRole('ADMIN'), userController.deleteUserById)
+router.get('/getUser/:uuid', checkRole('ADMIN'), userController.getUserByUuid)
+router.delete('/delete/:uuid', checkRole('ADMIN'), userController.deleteUserByUuid)
 module.exports = router

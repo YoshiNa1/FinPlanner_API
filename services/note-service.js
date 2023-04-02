@@ -4,7 +4,7 @@ const userService = require('../services/user-service')
 
 class NoteService {
     async create(refreshToken, date, content) {
-        const userId = await userService.getCurrentUserId(refreshToken)
+        const userUuid = await userService.getCurrentUserUuid(refreshToken)
         
         const candidate = await this.get(refreshToken, date)
         if(candidate) {
@@ -12,7 +12,7 @@ class NoteService {
             return updNote
         }
         
-        const note = await Note.create({userId, date: this.dateFormatted(date), content})
+        const note = await Note.create({userUuid, date: this.dateFormatted(date), content})
         return note
     }
 
@@ -25,8 +25,8 @@ class NoteService {
     }
 
     async getAll(refreshToken) {
-        const userId = await userService.getCurrentUserId(refreshToken)
-        const notes = await Note.findAll({where: {userId}})
+        const userUuid = await userService.getCurrentUserUuid(refreshToken)
+        const notes = await Note.findAll({where: {userUuid}})
         return notes
     }
     
@@ -44,8 +44,8 @@ class NoteService {
 
     
     async get(refreshToken, date) {
-        const userId = await userService.getCurrentUserId(refreshToken)
-        const note = await Note.findOne({where: {userId, date: this.dateFormatted(date)}})
+        const userUuid = await userService.getCurrentUserUuid(refreshToken)
+        const note = await Note.findOne({where: {userUuid, date: this.dateFormatted(date)}})
         return note
     }
 
@@ -59,16 +59,16 @@ class NoteService {
         const notes = await Note.findAll()
         return notes
     }
-    async getAllForUser(userId) {
-        const user = await User.findOne({where: {id: userId}})
+    async getAllForUser(userUuid) {
+        const user = await User.findOne({where: {uuid: userUuid}})
         if(!user) {
-            throw ApiError.BadRequest(`User with id ${userId} not found`)
+            throw ApiError.BadRequest(`User with uuid ${userUuid} not found`)
         }
-        const notes = await Note.findAll({where: {userId}})
+        const notes = await Note.findAll({where: {userUuid}})
         return notes
     }
-    async deleteAllForUser(userId) {
-        await Note.destroy({where: {userId}})
+    async deleteAllForUser(userUuid) {
+        await Note.destroy({where: {userUuid}})
     }
 }
 

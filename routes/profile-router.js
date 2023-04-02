@@ -12,7 +12,7 @@ router.delete('/', authMiddleware, profileController.delete)
 
 // ADMIN
 router.get('/all', checkRole('ADMIN'), profileController.getAll)
-router.get('/:userId', checkRole('ADMIN'), profileController.getProfileById)
-router.delete('/:userId', checkRole('ADMIN'), profileController.deleteProfileById)
+router.get('/:userUuid', checkRole('ADMIN'), profileController.getProfileByUuid)
+router.delete('/:userUuid', checkRole('ADMIN'), profileController.deleteProfileByUuid)
 
 module.exports = router

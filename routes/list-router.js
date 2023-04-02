@@ -10,7 +10,7 @@ router.put('/', checkProfile, listController.update)
 
 //ADMIN
 router.get('/all', checkRole('ADMIN'), listController.getAll)
-router.get('/user/:userId', checkRole('ADMIN'), listController.getByUserId)
-router.delete('/user/:userId', checkRole('ADMIN'), listController.deleteByUserId)
+router.get('/user/:userUuid', checkRole('ADMIN'), listController.getByUserUuid)
+router.delete('/user/:userUuid', checkRole('ADMIN'), listController.deleteByUserUuid)
 
 module.exports = router

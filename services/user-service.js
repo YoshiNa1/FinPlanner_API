@@ -20,11 +20,11 @@ class UserService {
         const user = await User.create({email, role, password: hashPassword, activationLink})
         await mailService.sendActivationMail(email, `${process.env.API_URL}/api/user/activate/${activationLink}`)
         
-        const userDto = new UserDto(user) // for payload, have only four fields: id, email, role, isActivated
+        const userDto = new UserDto(user) // for payload, have only four fields: uuid, email, role, isActivated
         const tokens = tokenService.generateTokens({...userDto}) // ... it's spread-operator, when you return object
-        await tokenService.saveToken(userDto.id, tokens.refreshToken)
+        await tokenService.saveToken(userDto.uuid, tokens.refreshToken)
 
-        await this.createList(userDto.id)
+        await this.createList(userDto.uuid)
 
         return { ...tokens, // разворачивание объекта
                 user: userDto }
@@ -51,7 +51,7 @@ class UserService {
         const userDto = new UserDto(user)
         const tokens = tokenService.generateTokens({...userDto})
        
-        await tokenService.saveToken(userDto.id, tokens.refreshToken)
+        await tokenService.saveToken(userDto.uuid, tokens.refreshToken)
         return { ...tokens, user: userDto }
     }
 
@@ -70,7 +70,7 @@ class UserService {
         const userDto = await this.get(refreshToken)
         const tokens = tokenService.generateTokens({...userDto})
        
-        await tokenService.saveToken(userDto.id, tokens.refreshToken)
+        await tokenService.saveToken(userDto.uuid, tokens.refreshToken)
         return { ...tokens, user: userDto }
     }
 
@@ -92,7 +92,7 @@ class UserService {
        
         await mailService.sendPasswordChangedMail(userDto.email)
        
-        await tokenService.saveToken(userDto.id, tokens.refreshToken)
+        await tokenService.saveToken(userDto.uuid, tokens.refreshToken)
 
         return { ...tokens, user: userDto }
     }
@@ -102,7 +102,7 @@ class UserService {
         const user = await this.getCurrentUser(refreshToken)
         const userDto = new UserDto(user)
 
-        await User.destroy({where: {id: user.id}})
+        await User.destroy({where: {id: user.uuid}})
         
         return userDto
     }
@@ -117,24 +117,24 @@ class UserService {
             throw ApiError.UnauthorizedError()
         }
 
-        const user = await User.findByPk(userData.id)
+        const user = await User.findByPk(userData.uuid)
         if(!user) {
-            throw ApiError.BadRequest(`User with id ${user.id} not found`)
+            throw ApiError.BadRequest(`User with uuid ${user.uuid} not found`)
         }
         return user
     }
 
-    async getCurrentUserId(refreshToken) {
+    async getCurrentUserUuid(refreshToken) {
         const user = await this.getCurrentUser(refreshToken)
-        return user.id
+        return user.uuid
     }
 
-    async createList(userId) { // creating after registration
-        const candidate = await List.findOne({where: {userId}})
+    async createList(userUuid) { // creating after registration
+        const candidate = await List.findOne({where: {userUuid}})
         if(candidate) {
-            throw ApiError.BadRequest(`List for user with id ${userId} already exists`)
+            throw ApiError.BadRequest(`List for user with uuid ${userUuid} already exists`)
         }
-        const list = await List.create({userId, content: new Array()})
+        const list = await List.create({userUuid, content: new Array()})
         return list
     }
     
@@ -144,19 +144,19 @@ class UserService {
         return users
     }
 
-    async getUserById(id) {
-        const user = await User.findByPk(id)
+    async getUserByUuid(uuid) {
+        const user = await User.findByPk(uuid)
         if(!user) {
-            throw ApiError.BadRequest(`User with id ${id} not found`)
+            throw ApiError.BadRequest(`User with uuid ${uuid} not found`)
         }
         return user
     }
 
-    async deleteUserById(id) {
-        const user = await User.findByPk(id)
+    async deleteUserByUuid(uuid) {
+        const user = await User.findByPk(uuid)
         const userDto = new UserDto(user)
 
-        await User.destroy({where: {id}})
+        await User.destroy({where: {uuid}})
         
         return userDto
     }
