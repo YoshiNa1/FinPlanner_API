@@ -1,6 +1,6 @@
 const Router = require('express').Router
 const router = new Router()
-const {body} = require('express-validator')
+const {body, param} = require('express-validator')
 const userController = require('../controllers/user-controller')
 const authMiddleware = require('../middlewares/auth-middleware')
 const checkRole = require('../middlewares/role-middleware')
@@ -11,6 +11,9 @@ router.post('/registration',
             body('password').isLength({min: 8, max: 32}),
             userController.registration)
 router.get('/activate/:link', userController.activate)
+router.get('/:email', 
+            param('email').isEmail(), 
+            userController.getByEmail)
 router.post('/login', userController.login)
 router.post('/logout', authMiddleware, userController.logout)
 router.get('/refresh', authMiddleware, userController.refresh)

@@ -38,6 +38,14 @@ class UserService {
         user.isActivated = true
         await user.save()
     }
+    
+    async getByEmail(email) {
+        const user = await User.findOne({where: {email}})
+        if(!user) {
+            return false
+        }
+        return true
+    }
 
     async login(email, password) {
         const user = await User.findOne({where: {email}})

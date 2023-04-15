@@ -34,6 +34,16 @@ class UserController {
         }
     }
 
+    async getByEmail(req, res, next) {
+        try {
+            const email = req.params.email
+            const isUserExists = await userService.getByEmail(email)
+            return res.json(isUserExists)
+        } catch (e) {
+            next(e)
+        }
+    }
+
     async logout(req, res, next) {
         try {
             const {refreshToken} = req.cookies
