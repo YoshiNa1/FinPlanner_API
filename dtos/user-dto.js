@@ -1,9 +1,9 @@
 // dto -- data transfer object
 module.exports = class UserDto {
-    email
-    uuid
-    role
-    isActivated
+    // email
+    // uuid
+    // role
+    // isActivated
 
     constructor(model) {
         this.email = model.email
